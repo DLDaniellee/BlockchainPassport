@@ -1,0 +1,316 @@
+{
+	"compiler": {
+		"version": "0.8.22+commit.4fc1097e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "passportID",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "holderName",
+						"type": "string"
+					}
+				],
+				"name": "PassportIssued",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "passportID",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "newStatus",
+						"type": "uint8"
+					}
+				],
+				"name": "PassportStatusUpdated",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "admin",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "passportID",
+						"type": "string"
+					}
+				],
+				"name": "getHistory",
+				"outputs": [
+					{
+						"internalType": "string[]",
+						"name": "",
+						"type": "string[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "passportID",
+						"type": "string"
+					}
+				],
+				"name": "getPassport",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "holderName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "nationality",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "birthDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "issueDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "expiryDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "isValid",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "issuer",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "passportID",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "holderName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "nationality",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "birthDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "issueDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "expiryDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint8",
+						"name": "isValid",
+						"type": "uint8"
+					}
+				],
+				"name": "issuePassport",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "issuer",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "passportID",
+						"type": "string"
+					},
+					{
+						"internalType": "uint8",
+						"name": "newStatus",
+						"type": "uint8"
+					}
+				],
+				"name": "updatePassportStatus",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"details": "管理護照的發行與狀態更新的智能合約，支持歷史操作記錄",
+			"kind": "dev",
+			"methods": {
+				"constructor": {
+					"details": "初始化合約，將管理員設為合約部署者"
+				},
+				"getHistory(string)": {
+					"params": {
+						"passportID": "護照ID"
+					},
+					"returns": {
+						"_0": "history 歷史記錄數組，以可讀格式返回"
+					}
+				},
+				"getPassport(string)": {
+					"params": {
+						"passportID": "護照ID"
+					},
+					"returns": {
+						"birthDate": "出生日期",
+						"expiryDate": "到期日期",
+						"holderName": "持有者姓名",
+						"isValid": "狀態（1:有效, 0:無效）",
+						"issueDate": "發行日期",
+						"nationality": "國籍"
+					}
+				},
+				"issuePassport(address,string,string,string,uint256,uint256,uint256,uint8)": {
+					"details": "僅限管理員操作",
+					"params": {
+						"birthDate": "出生日期（Unix時間戳）",
+						"expiryDate": "到期日期（Unix時間戳）",
+						"holderName": "持有者姓名",
+						"isValid": "初始狀態（1:有效, 0:無效）",
+						"issueDate": "發行日期（Unix時間戳）",
+						"issuer": "發行機構地址（管理員）",
+						"nationality": "國籍",
+						"passportID": "護照ID（唯一識別碼）"
+					}
+				},
+				"updatePassportStatus(address,string,uint8)": {
+					"details": "僅限管理員操作",
+					"params": {
+						"issuer": "發行機構地址（管理員）",
+						"newStatus": "新的狀態（1:有效, 0:無效）",
+						"passportID": "護照ID"
+					}
+				}
+			},
+			"stateVariables": {
+				"passportHistory": {
+					"details": "儲存護照ID對應的歷史操作記錄"
+				},
+				"passports": {
+					"details": "儲存護照ID對應的護照資訊"
+				}
+			},
+			"title": "BlockchainPassport",
+			"version": 1
+		},
+		"userdoc": {
+			"events": {
+				"PassportIssued(string,string)": {
+					"notice": "發行護照時觸發的事件"
+				},
+				"PassportStatusUpdated(string,uint8)": {
+					"notice": "更新護照狀態時觸發的事件"
+				}
+			},
+			"kind": "user",
+			"methods": {
+				"admin()": {
+					"notice": "發行機構（管理員）的地址"
+				},
+				"getHistory(string)": {
+					"notice": "查詢護照的歷史操作記錄"
+				},
+				"getPassport(string)": {
+					"notice": "查詢護照資訊"
+				},
+				"issuePassport(address,string,string,string,uint256,uint256,uint256,uint8)": {
+					"notice": "發行新護照"
+				},
+				"updatePassportStatus(address,string,uint8)": {
+					"notice": "更新護照狀態"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"BlockchainPassport/contracts/BlockchainPassport.sol": "BlockchainPassport"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"BlockchainPassport/contracts/BlockchainPassport.sol": {
+			"keccak256": "0x75d4582d6156f2a9b245e37cf94bcfb928db04707c740a2b533fbc775ad33001",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2e78181bb17f0203b9facd671d75250d4c8aa647ea81b91eba1a4208638e4cd4",
+				"dweb:/ipfs/QmTXndqYpmEGBP6686bvKYNUeAWGkmPheG2CMxk9T4Qye4"
+			]
+		}
+	},
+	"version": 1
+}

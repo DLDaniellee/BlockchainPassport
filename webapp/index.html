@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Passport</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1>Blockchain Passport </h1>
+
+    <div>
+        <h2>1. 發行護照</h2>
+        <label>Passport ID:</label>
+        <input type="text" id="passportID" placeholder="Enter Passport ID"><br>
+        <label>Holder Name:</label>
+        <input type="text" id="holderName" placeholder="Enter Holder Name"><br>
+        <label>Nationality:</label>
+        <input type="text" id="nationality" placeholder="Enter Nationality"><br>
+        <label>Birth Date (YYYYMMDD):</label>
+        <input type="number" id="birthDate" placeholder="Enter Birth Date"><br>
+        <label>Issue Date (YYYYMMDD):</label>
+        <input type="number" id="issueDate" placeholder="Enter Issue Date"><br>
+        <label>Expiry Date (YYYYMMDD):</label>
+        <input type="number" id="expiryDate" placeholder="Enter Expiry Date"><br>
+        <label>Is Valid:</label>
+        <select id="isValid">
+            <option value="true">True</option>
+            <option value="false">False</option>
+        </select><br>
+        <button onclick="issuePassport()">發行護照</button>
+    </div>
+
+    <hr>
+
+    <div>
+        <h2>2. 查詢護照資訊</h2>
+        <label>Passport ID:</label>
+        <input type="text" id="queryPassportID" placeholder="Enter Passport ID"><br>
+        <button onclick="getPassport()">查詢護照</button>
+        <p id="passportInfo"></p>
+    </div>
+
+    <hr>
+
+    <div>
+        <h2>3. 更新護照狀態</h2>
+        <label>Passport ID:</label>
+        <input type="text" id="updatePassportID" placeholder="Enter Passport ID"><br>
+        <label>New Status:</label>
+        <select id="newStatus">
+            <option value="true">True</option>
+            <option value="false">False</option>
+        </select><br>
+        <button onclick="updatePassportStatus()">更新護照狀態</button>
+    </div>
+
+    <script>
+        const contractAddress = "YOUR_CONTRACT_ADDRESS"; // 替換為部署的合約地址
+        const contractABI = [ /* YOUR_CONTRACT_ABI */ ]; // 替換為合約的 ABI
+
+        let web3;
+        let contract;
+        let userAccount;
+
+        async function loadWeb3() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.enable();
+                const accounts = await web3.eth.getAccounts();
+                userAccount = accounts[0];
+                contract = new web3.eth.Contract(contractABI, contractAddress);
+                console.log("Web3 Loaded:", userAccount);
+            } else {
+                alert("請安裝 MetaMask 瀏覽器擴展");
+            }
+        }
+
+        async function issuePassport() {
+            const passportID = document.getElementById("passportID").value;
+            const holderName = document.getElementById("holderName").value;
+            const nationality = document.getElementById("nationality").value;
+            const birthDate = parseInt(document.getElementById("birthDate").value);
+            const issueDate = parseInt(document.getElementById("issueDate").value);
+            const expiryDate = parseInt(document.getElementById("expiryDate").value);
+            const isValid = document.getElementById("isValid").value === "true";
+
+            try {
+                await contract.methods.issuePassport(
+                    userAccount,
+                    passportID,
+                    holderName,
+                    nationality,
+                    birthDate,
+                    issueDate,
+                    expiryDate,
+                    isValid
+                ).send({ from: userAccount });
+                alert("護照已成功發行");
+            } catch (error) {
+                console.error("發行護照失敗:", error);
+                alert("發行護照失敗");
+            }
+        }
+
+        async function getPassport() {
+            const passportID = document.getElementById("queryPassportID").value;
+
+            try {
+                const result = await contract.methods.getPassport(passportID).call();
+                document.getElementById("passportInfo").innerText = `
+                    Holder Name: ${result[0]}
+                    Nationality: ${result[1]}
+                    Birth Date: ${result[2]}
+                    Issue Date: ${result[3]}
+                    Expiry Date: ${result[4]}
+                    Is Valid: ${result[5]}
+                `;
+            } catch (error) {
+                console.error("查詢護照失敗:", error);
+                alert("護照不存在");
+            }
+        }
+
+        async function updatePassportStatus() {
+            const passportID = document.getElementById("updatePassportID").value;
+            const newStatus = document.getElementById("newStatus").value === "true";
+
+            try {
+                await contract.methods.updatePassportStatus(
+                    userAccount,
+                    passportID,
+                    newStatus
+                ).send({ from: userAccount });
+                alert("護照狀態已成功更新");
+            } catch (error) {
+                console.error("更新護照狀態失敗:", error);
+                alert("更新護照狀態失敗");
+            }
+        }
+
+        // 自動加載 Web3
+        window.onload = loadWeb3;
+    </script>
+</body>
+</html>
