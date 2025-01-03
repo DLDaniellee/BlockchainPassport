@@ -46,15 +46,14 @@ contract BlockchainPassport {
     }
 
     /// @dev 僅允許管理員調用的方法修飾符
-    modifier onlyIssuer(address issuer) {
-        require(issuer == admin, "Only the admin can perform this action");
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only the admin can perform this action");
         _;
     }
 
     /**
      * @notice 發行新護照
      * @dev 僅限管理員操作
-     * @param issuer 發行機構地址（管理員）
      * @param passportID 護照ID（唯一識別碼）
      * @param holderName 持有者姓名
      * @param nationality 國籍
@@ -64,7 +63,6 @@ contract BlockchainPassport {
      * @param isValid 初始狀態（1:有效, 0:無效）
      */
     function issuePassport(
-        address issuer,
         string memory passportID,
         string memory holderName,
         string memory nationality,
@@ -72,7 +70,7 @@ contract BlockchainPassport {
         uint256 issueDate,
         uint256 expiryDate,
         uint8 isValid
-    ) public onlyIssuer(issuer) {
+    ) public onlyAdmin {
         require(bytes(passports[passportID].holderName).length == 0, "Passport ID already exists");
         require(isValid == 0 || isValid == 1, "Invalid status value (must be 0 or 1)");
 
@@ -85,12 +83,9 @@ contract BlockchainPassport {
             isValid: isValid
         });
 
-        // 調試信息，確認設置正確
-        assert(passports[passportID].isValid == isValid);
-
         // 記錄操作到歷史記錄
         passportHistory[passportID].push(History({
-            updatedBy: issuer,
+            updatedBy: msg.sender,
             timestamp: block.timestamp,
             fieldChanged: "Issue Passport",
             oldValue: "N/A",
@@ -139,15 +134,13 @@ contract BlockchainPassport {
     /**
      * @notice 更新護照狀態
      * @dev 僅限管理員操作
-     * @param issuer 發行機構地址（管理員）
      * @param passportID 護照ID
      * @param newStatus 新的狀態（1:有效, 0:無效）
      */
     function updatePassportStatus(
-        address issuer,
         string memory passportID,
         uint8 newStatus
-    ) public onlyIssuer(issuer) {
+    ) public onlyAdmin {
         require(bytes(passports[passportID].holderName).length != 0, "Passport ID does not exist");
         require(newStatus == 0 || newStatus == 1, "Invalid status value (must be 0 or 1)");
 
@@ -155,12 +148,9 @@ contract BlockchainPassport {
 
         passports[passportID].isValid = newStatus;
 
-        // 調試信息，確認更新正確
-        assert(passports[passportID].isValid == newStatus);
-
         // 記錄操作到歷史記錄
         passportHistory[passportID].push(History({
-            updatedBy: issuer,
+            updatedBy: msg.sender,
             timestamp: block.timestamp,
             fieldChanged: "isValid",
             oldValue: oldStatus == 1 ? "1" : "0",
@@ -235,3 +225,4 @@ contract BlockchainPassport {
         return string(buffer);
     }
 }
+
