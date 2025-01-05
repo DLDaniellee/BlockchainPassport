@@ -6,7 +6,6 @@ pragma solidity ^0.8.18;
  * @dev 管理護照的發行與狀態更新的智能合約，支持歷史操作記錄
  */
 ///修正了誰都可以發行的錯誤
-///歷史紀錄嘗試event後仍然出錯
 contract BlockchainPassport {
     /// @notice 發行機構（管理員）的地址
     address public admin;
