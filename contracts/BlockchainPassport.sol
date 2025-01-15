@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 /**
  * @title BlockchainPassport
- * @dev 管理護照的發行與狀態更新的智能合約，支持歷史操作記錄
+ * @dev 管理護照的發行與狀態更新的智能合約
  */
 ///修正了誰都可以發行的錯誤
 contract BlockchainPassport {
